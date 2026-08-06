@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+## array
+_ga_exec_metacubexd=(
+        '/app/opt/metacubexd/metacubexd'
+        --no-sandbox
+        --ozone-platform-hint=auto
+        --enable-wayland-ime
+        --enable-features=WebRTCPipeWireCapturer
+        "${@}"
+)
+
+
+## execute
+"${_ga_exec_metacubexd[@]}"
+

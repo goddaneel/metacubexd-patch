@@ -1,0 +1,88 @@
+id: io.goddaneel.metacubexd
+runtime: org.gnome.Platform
+runtime-version: '49'
+sdk: org.gnome.Sdk
+command: metacubexd
+
+
+
+
+finish-args:
+  - --share=network
+  - --socket=wayland
+  - --device=dri
+  - --persist="."
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.kde.StatusNotifierWatcher
+
+
+
+
+modules:
+  - name: metacubexd
+    buildsystem: simple
+    build-commands:
+      - install -v -d -m 0755 "/app/opt"
+      - install -v -d -m 0755 "./archive/extract"
+
+      - cp -rv
+        "./archive/extract/opt"
+        "/app"
+
+      - rm -rv "./archive"
+
+      - chmod -c a+x "/app/opt/metacubexd/chrome-sandbox"
+      - chmod -c a+x "/app/opt/metacubexd/resources/files/metacubexd-service"
+      - chmod -c a+x "/app/opt/metacubexd/resources/sidecar/mihomo"
+      - chmod -c a+x "/app/opt/metacubexd/resources/sidecar/mihomo-alpha"
+      - chmod -c -R -P go-w "/app"
+
+
+    sources:
+      - type: file
+        dest: "./archive"
+        dest-filename:
+        url:
+        sha256:
+
+  - name: mihomo
+    buildsystem: simple
+    build-commands:
+      - install -v -d -m 0755 "/app/opt"
+      - install -v -d -m 0755 "./archive/extract"
+
+    sources:
+      - type: file
+        dest: "./archive"
+        dest-filename:
+        url:
+        sha256:
+
+
+
+  - name: metacubexd-patch
+    buildsystem: simple
+    build-commands:
+      - install -v -d -m 0755 "/app/bin"
+      - install -v -d -m 0755 "/app/share/metainfo"
+      - install -v -d -m 0755 "/app/share/doc"
+      - install -v -d -m 0755 "/app/share/applications"
+      - install -v -d -m 0755 "/app/share/icons/hicolor/512x512/apps"
+
+      - install -v -m 0755 
+        "./flatpak/extra/bin/metacubexd"
+        "/app/bin/"
+      - install -v -m 0644 
+        "./flatpak/extra/metainfo/io.goddaneel.metacubexd.metainfo.xml"
+        "/app/share/metainfo/"
+      - install -v -m 0644 
+        "./flatpak/extra/applications/io.goddaneel.metacubexd.desktop"
+        "/app/share/applications/"
+      - install -v -m 0644 
+        "./patch/resources/icon.png"
+        "/app/share/icons/hicolor/512x512/apps/io.goddaneel.metacubexd.png"
+
+
+    sources:
+      - type: dir
+        path: "../"

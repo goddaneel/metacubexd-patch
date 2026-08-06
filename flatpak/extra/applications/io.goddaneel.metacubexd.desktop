@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=MetaCubeXD
+Icon=io.goddaneel.metacubexd
+Exec=metacubexd
+StartupWMClass=metacubexd
+X-Flatpak=io.goddaneel.metacubexd
+Comment=Unofficial Package
+Categories=Network
+Terminal=false
