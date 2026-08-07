@@ -1,0 +1,15 @@
+version: 5.4.2
+
+
+
+service:
+  metacubexd:
+    image:
+    container_name: build_metacubexd
+    restart: always
+
+    ports:
+
+    volumes:
+
+    environment:
