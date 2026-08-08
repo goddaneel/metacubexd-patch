@@ -28,7 +28,7 @@ default:
         just --list --unsorted
 
 
-clean-new:
+clean-git:
         #!/bin/bash
         set -euxo pipefail
         #       #
@@ -42,7 +42,7 @@ clean-new:
         "${_la_exec_git[@]}"
 
 
-remove-env:
+clean-rm:
         #!/bin/bash
         set -euxo pipefail
         #       #
@@ -76,7 +76,91 @@ shasum-export arg1:
         "${_la_exec_shasum[@]}" >> "{{arg1}}.shasum"
 
 
-build-flatpak:
+podman-build:
+        #!/bin/bash
+        set -euxo pipefail
+        #       #
+        declare -a "_la_exec_podman"
+        #       #
+        _la_exec_podman=(
+                '/usr/bin/podman'
+                build
+                --tag "goddaneel_flatpak-builder"
+                "."
+        )
+        #       #
+        "${_la_exec_podman[@]}"
+        #       #
+        _la_exec_podman=(
+                '/usr/bin/podman'
+                image
+                prune --force
+        )
+        #       #
+        "${_la_exec_podman[@]}"
+
+
+podman-up:
+        #!/bin/bash
+        set -euxo pipefail
+        #       #
+        declare -a "_la_exec_podman"
+        #       #
+        _la_exec_podman=(
+                '/usr/bin/podman'
+                compose
+                --in-pod=false up -d
+        )
+        #       #
+        "${_la_exec_podman[@]}"
+
+
+podman-down:
+        #!/bin/bash
+        set -euxo pipefail
+        #       #
+        declare -a "_la_exec_podman"
+        #       #
+        _la_exec_podman=(
+                '/usr/bin/podman'
+                compose
+                down
+        )
+        #       #
+        "${_la_exec_podman[@]}"
+
+
+podman-exec arg1:
+        #!/bin/bash
+        set -euxo pipefail
+        #       #
+        declare -a "_la_exec_podman"
+        #       #
+        _la_exec_podman=(
+                '/usr/bin/podman'
+                compose
+                exec "metacubexd" "{{arg1}}"
+        )
+        #       #
+        "${_la_exec_podman[@]}"
+
+
+podman-just arg1:
+        #!/bin/bash
+        set -euxo pipefail
+        #       #
+        declare -a "_la_exec_podman"
+        #       #
+        _la_exec_podman=(
+                '/usr/bin/podman'
+                compose
+                exec "metacubexd" "just" "{{arg1}}"
+        )
+        #       #
+        "${_la_exec_podman[@]}"
+
+
+flatpak-build:
         #!/bin/bash
         set -euxo pipefail
         #       #
@@ -98,6 +182,7 @@ build-flatpak:
         _la_exec_flatpak=(
                 '/usr/bin/flatpak-builder'
                 --force-clean --disable-rofiles-fuse
+                --install-deps-from="flathub"
                 --repo="{{_gs_path_temp}}/flatpak/repo"
                 --state-dir="{{_gs_path_temp}}/flatpak/state"
                 "{{_gs_path_temp}}/flatpak/dir"
@@ -107,7 +192,7 @@ build-flatpak:
         "${_la_exec_flatpak[@]}"
 
 
-export-flatpak:
+flatpak-export:
         #!/bin/bash
         set -euxo pipefail
         #       #
@@ -137,9 +222,9 @@ export-flatpak:
 
 
 work-clean:
-        just remove-env
-        just clean-new
+        just clean-rm
+        just clean-git
 
 work-flatpak:
-        just build-flatpak
-        just export-flatpak
+        just flatpak-build
+        just flatpak-export

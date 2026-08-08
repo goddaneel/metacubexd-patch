@@ -2,14 +2,31 @@ version: 5.4.2
 
 
 
-service:
-  metacubexd:
-    image:
-    container_name: build_metacubexd
-    restart: always
 
-    ports:
+services:
+  metacubexd:
+    image: localhost/goddaneel_flatpak-builder:latest
+    container_name: build_metacubexd
+
+
+    restart: always
+    tty: true
+    stdin_open: true
+
+
+    working_dir: /_project
+
 
     volumes:
+      - type: bind
+        source: ./
+        target: /_project
+        read_only: true
 
-    environment:
+      - type: bind
+        source: ./export
+        target: /_project/export
+        selinux: Z
+
+      - type: tmpfs
+        target: /_project/temp
