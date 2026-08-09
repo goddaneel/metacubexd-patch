@@ -29,32 +29,11 @@ default:
 
 
 clean-git:
-        #!/bin/bash
-        set -euxo pipefail
-        #       #
-        declare -a "_la_exec_git"
-        #       #
-        _la_exec_git=(
-                '/usr/bin/git'
-                clean -xd -f
-        )
-        #       #
-        "${_la_exec_git[@]}"
+        git clean -xd -f
 
 
 clean-rm:
-        #!/bin/bash
-        set -euxo pipefail
-        #       #
-        declare -a "_la_exec_rm"
-        #       #
-        _la_exec_rm=(
-                '/usr/bin/rm'
-                -rfv
-                "{{_gs_path_temp}}/flatpak"
-        )
-        #       #
-        "${_la_exec_rm[@]}"
+        rm -rfv "{{_gs_path_temp}}/flatpak"
 
 
 shasum-export arg1:
@@ -62,102 +41,29 @@ shasum-export arg1:
         set -euxo pipefail
         #       #
         cd "{{_gs_path_export}}"
-        #       #
-        declare -a "_la_exec_shasum"
-        #       #
         export LC_ALL="C"
-        #       #
-        _la_exec_shasum=(
-                '/usr/bin/shasum'
-                -a 512
-                {{arg1}}
-        )
-        #       #
-        "${_la_exec_shasum[@]}" >> "{{arg1}}.shasum"
+        shasum -a 512 {{arg1}} >> "{{arg1}}.shasum"
 
 
 podman-build:
-        #!/bin/bash
-        set -euxo pipefail
-        #       #
-        declare -a "_la_exec_podman"
-        #       #
-        _la_exec_podman=(
-                '/usr/bin/podman'
-                build
-                --tag "goddaneel_flatpak-builder"
-                "."
-        )
-        #       #
-        "${_la_exec_podman[@]}"
-        #       #
-        _la_exec_podman=(
-                '/usr/bin/podman'
-                image
-                prune --force
-        )
-        #       #
-        "${_la_exec_podman[@]}"
+        podman build --tag "goddaneel_flatpak-builder" "."
+        podman image prune --force
 
 
 podman-up:
-        #!/bin/bash
-        set -euxo pipefail
-        #       #
-        declare -a "_la_exec_podman"
-        #       #
-        _la_exec_podman=(
-                '/usr/bin/podman'
-                compose
-                --in-pod=false up -d
-        )
-        #       #
-        "${_la_exec_podman[@]}"
+        podman compose --in-pod=false up -d
 
 
 podman-down:
-        #!/bin/bash
-        set -euxo pipefail
-        #       #
-        declare -a "_la_exec_podman"
-        #       #
-        _la_exec_podman=(
-                '/usr/bin/podman'
-                compose
-                down
-        )
-        #       #
-        "${_la_exec_podman[@]}"
+        podman compose down
 
 
 podman-exec arg1:
-        #!/bin/bash
-        set -euxo pipefail
-        #       #
-        declare -a "_la_exec_podman"
-        #       #
-        _la_exec_podman=(
-                '/usr/bin/podman'
-                compose
-                exec "metacubexd" "{{arg1}}"
-        )
-        #       #
-        "${_la_exec_podman[@]}"
+        podman compose exec "metacubexd" "{{arg1}}"
 
 
 podman-just arg1:
-        #!/bin/bash
-        set -euxo pipefail
-        #       #
-        declare -a "_la_exec_podman"
-        #       #
-        _la_exec_podman=(
-                '/usr/bin/podman'
-                compose
-                exec "metacubexd" "just" "{{arg1}}"
-        )
-        #       #
-        "${_la_exec_podman[@]}"
+        podman compose exec "metacubexd" "just" "{{arg1}}"
 
 
 flatpak-build:
@@ -168,8 +74,7 @@ flatpak-build:
         declare -a "_la_exec_flatpak"
         #       #
         _la_exec_install=(
-                '/usr/bin/install'
-                -d -v
+                install -d -v
                 "{{_gs_path_temp}}"
                 "{{_gs_path_temp}}/flatpak"
                 "{{_gs_path_temp}}/flatpak/repo"
@@ -177,11 +82,8 @@ flatpak-build:
                 "{{_gs_path_temp}}/flatpak/dir"
         )
         #       #
-        "${_la_exec_install[@]}"
-        #       #
         _la_exec_flatpak=(
-                '/usr/bin/flatpak-builder'
-                --force-clean --disable-rofiles-fuse
+                flatpak-builder --force-clean --disable-rofiles-fuse
                 --install-deps-from="flathub"
                 --repo="{{_gs_path_temp}}/flatpak/repo"
                 --state-dir="{{_gs_path_temp}}/flatpak/state"
@@ -189,6 +91,7 @@ flatpak-build:
                 "{{_gs_path_pwd}}/flatpak/io.goddaneel.metacubexd.yml"
         )
         #       #
+        "${_la_exec_install[@]}"
         "${_la_exec_flatpak[@]}"
 
 
@@ -200,21 +103,18 @@ flatpak-export:
         declare -a "_la_exec_flatpak"
         #       #
         _la_exec_install=(
-                '/usr/bin/install'
-                -d -v
+                install -d -v
                 "{{_gs_path_export}}"
         )
         #       #
-        "${_la_exec_install[@]}"
-        #       #
         _la_exec_flatpak=(
-                '/usr/bin/flatpak'
-                build-bundle
+                flatpak build-bundle
                 "{{_gs_path_temp}}/flatpak/repo"
                 "{{_gs_path_export}}/{{_gs_file_build_flatpak}}"
                 "{{_gs_init_id}}"
         )
         #       #
+        "${_la_exec_install[@]}"
         "${_la_exec_flatpak[@]}"
         #       #
         just shasum-export "{{_gs_file_build_flatpak}}"
