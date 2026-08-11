@@ -84,7 +84,6 @@ flatpak-build:
         #       #
         _la_exec_flatpak=(
                 flatpak-builder --force-clean --disable-rofiles-fuse
-                --install-deps-from="flathub"
                 --repo="{{_gs_path_temp}}/flatpak/repo"
                 --state-dir="{{_gs_path_temp}}/flatpak/state"
                 "{{_gs_path_temp}}/flatpak/dir"
