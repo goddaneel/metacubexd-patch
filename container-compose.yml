@@ -16,11 +16,11 @@ services:
 
     cap_add:
       - SYS_ADMIN
+      - NET_ADMIN
 
 
     security_opt:
-      - seccomp=unconfined
-      - apparmor=unconfined
+      - unmask=ALL
 
 
     working_dir: /_project

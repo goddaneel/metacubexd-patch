@@ -32,5 +32,9 @@ RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flath
 # update
 RUN flatpak update -y
 
+# install
+RUN flatpak install -y "org.gnome.Sdk//50"
+RUN flatpak install -y "org.gnome.Platform//50"
+
 # clean
 RUN flatpak uninstall --system --unused --delete-data -y

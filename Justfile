@@ -13,7 +13,7 @@ _gs_init_version_full := ```
 '/usr/bin/xmlstarlet' sel -t -v "/component/releases/release/@version" "flatpak/extra/metainfo/io.goddaneel.metacubexd.metainfo.xml"
 ```
 
-_gs_file_build_flatpak := "sparkle-linux-" + _gs_init_version_full + "-amd64.flatpak"
+_gs_file_build_flatpak := "metacubexd-linux-" + _gs_init_version_full + "-amd64.flatpak"
 
 
 ## path
@@ -47,6 +47,11 @@ shasum-export arg1:
 
 podman-build:
         podman build --tag "goddaneel_flatpak-builder" "."
+        podman image prune --force
+
+
+podman-rmi:
+        podman rmi "localhost/goddaneel_flatpak-builder"
         podman image prune --force
 
 
@@ -120,10 +125,31 @@ flatpak-export:
 
 
 
-work-clean:
+clean-all:
         just clean-rm
         just clean-git
 
-work-flatpak:
+
+podman-bash:
+        just podman-down
+        just podman-up
+        just podman-exec bash
+
+
+flatpak-work:
         just flatpak-build
         just flatpak-export
+
+
+clean-podman:
+        just podman-down
+        just clean-rm
+        just clean-git
+
+
+podman-flatpak:
+        just podman-down
+        just clean-rm
+        just clean-git
+        just podman-up
+        just podman-just flatpak-work
