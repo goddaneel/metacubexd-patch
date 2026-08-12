@@ -10,7 +10,7 @@ set shell := ["bash", "-uc"]
 _gs_init_id := "io.goddaneel.metacubexd"
 
 _gs_init_version_full := ```
-'/usr/bin/xmlstarlet' sel -t -v "/component/releases/release/@version" "flatpak/extra/metainfo/io.goddaneel.metacubexd.metainfo.xml"
+xmlstarlet sel -t -v "/component/releases/release/@version" "flatpak/extra/metainfo/io.goddaneel.metacubexd.metainfo.xml"
 ```
 
 _gs_file_build_flatpak := "metacubexd-linux-" + _gs_init_version_full + "-amd64.flatpak"
